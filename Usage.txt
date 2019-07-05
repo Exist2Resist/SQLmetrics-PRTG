@@ -1,0 +1,80 @@
+Usage:
+> SQLmetrics [switch]
+
+Usage example:
+> SQLmetrics.exe pagelfx
+
+Acceptable command line switches.
+
+pagelfx
+batreqsec
+sqlcomsec
+sqlrecomsec
+userconn
+lckwtssec
+pgsplitsec
+procblock
+chkpgsec
+
+pagelfx: returns int
+ The page life expectancy counter measures how long pages stay in the buffer cache in seconds. 
+ The longer a page stays in memory, the more likely SQL Server will not need to read from disk 
+ to resolve a query. You should watch this counter over time to determine a baseline for what 
+ is normal in your database environment. Some say anything below 300 (or 5 minutes) means you 
+ might need additional memory.
+
+batreqsec: returns int
+ Batch Requests/Sec measures the number of batches SQL Server is receiving per second. This counter 
+ is a good indicator of how much activity is being processed by your SQL Server box. The higher the 
+ number, the more queries are being executed on your box. Like many counters, there is no single number
+ that can be used universally to indicate your machine is too busy. Today’s machines are getting more 
+ and more powerful all the time and therefore can process more batch requests per second. You should 
+ review this counter over time to determine a baseline number for your environment.
+
+sqlcomsec: returns float
+ The SQL Compilations/Sec measure the number of times SQL Server compiles an execution plan per 
+ second. Compiling an execution plan is a resource-intensive operation. Compilations/Sec should 
+ be compared with the number of Batch Requests/Sec to get an indication of whether or not 
+ complications might be hurting your performance. To do that, divide the number of batch requests 
+ by the number of compiles per second to give you a ratio of the number of batches executed per 
+ compile. Ideally you want to have one compile per every 10 batch requests.
+
+sqlrecomsec: returns float
+ When the execution plan is invalidated due to some significant event, SQL Server will re-compile it. 
+ The Re-compilations/Sec counter measures the number of time a re-compile event was triggered per 
+ second. Re-compiles, like compiles, are expensive operations so you want to minimize the number of 
+ re-compiles. Ideally you want to keep this counter less than 10% of the number of Compilations/Sec.
+
+userconn: returns int
+ The user connections counter identifies the number of different users that are connected to SQL Server 
+ at the time the sample was taken. You need to watch this counter over time to understand your baseline 
+ user connection numbers. Once you have some idea of your high and low water marks during normal usage 
+ of your system, you can then look for times when this counter exceeds the high and low marks. If the 
+ value of this counter goes down and the load on the system is the same, then you might have a bottleneck 
+ that is not allowing your server to handle the normal load. Keep in mind though that this counter value 
+ might go down just because less people are using your SQL Server instance.
+
+lckwtssec: returns int
+ In order for SQL Server to manage concurrent users on the system, SQL Server needs to lock resources 
+ from time to time. The lock waits per second counter tracks the number of times per second that 
+ SQL Server is not able to retain a lock right away for a resource. Ideally you don't want any request 
+ to wait for a lock. Therefore you want to keep this counter at zero, or close to zero at all times
+
+pgsplitsec: returns float
+ This counter measures the number of times SQL Server had to split a page when updating or 
+ inserting data per second. Page splits are expensive, and cause your table to perform more poorly
+ due to fragmentation. Therefore, the fewer page splits you have the better your system will perform. 
+ Ideally this counter should be less than 20% of the batch requests per second.
+
+procblock: returns int
+ The processes blocked counter identifies the number of blocked processes. When one process 
+ is blocking another process, the blocked process cannot move forward with its execution plan 
+ until the resource that is causing it to wait is freed up. Ideally you don't want to see any 
+ blocked processes. When processes are being blocked you should investigate.
+
+chkpgsec: returns int
+ The checkpoint pages per second counter measures the number of pages written to disk by a 
+ checkpoint operation. You should watch this counter over time to establish a baseline for
+ your systems. Once a baseline value has been established you can watch this value to see 
+ if it is climbing. If this counter is climbing, it might mean you are running into memory
+ pressures that are causing dirty pages to be flushed to disk more frequently than normal.
